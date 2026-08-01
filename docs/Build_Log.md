@@ -70,3 +70,20 @@ into a list of 1024 numbers — a kind of fingerprint of its meaning. Two
 chunks about similar topics end up with similar fingerprints, even if they
 don't share a single word in common. That's what makes 'search by meaning'
 possible instead of just keyword matching."
+## Step 5: Vector store (`src/vectorstore/store.py`)
+
+**What it is:** Connects to a Qdrant Cloud collection, stores chunks alongside
+their embeddings, and searches for the most similar stored chunks given a
+query vector.
+
+**Why it matters:** A regular database can't search "by meaning" — it can
+only match exact values. Qdrant is built specifically to store vectors and
+find the nearest ones to a given query vector extremely fast, even across
+millions of entries. This is the engine that makes "search by meaning"
+practically possible at scale.
+
+**Plain-English summary:** "I connected the embeddings to a specialized
+search database built for comparing meaning instead of exact text. I tested
+it by asking it to find the chunk most similar to itself — it correctly
+returned a perfect match, proving the whole pipeline (load → chunk → embed →
+store → search) works end-to-end."
