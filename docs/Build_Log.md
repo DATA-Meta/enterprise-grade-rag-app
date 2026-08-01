@@ -38,3 +38,17 @@ reads from — like a fuse box for the whole house instead of separate wiring
 in every room."
 
 ---
+## Step 3: Document ingestion (`src/ingestion/loader.py`)
+
+**What it is:** Reads `.txt` and `.pdf` files from a folder and splits each one
+into overlapping ~1000-character chunks.
+
+**Why it matters:** Language models and vector search work on small, focused
+pieces of text, not entire documents. Splitting into chunks with overlap means
+a sentence isn't cut in half at a chunk boundary — the last bit of one chunk
+reappears at the start of the next, so no context is lost.
+
+**Plain-English summary:** "I built the part that takes a whole document and
+cuts it into small, slightly-overlapping pieces — like tearing a long letter
+into index cards, but making sure each card includes a bit of the previous
+card's last sentence so nothing gets lost."
