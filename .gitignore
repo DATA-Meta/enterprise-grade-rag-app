@@ -1,0 +1,46 @@
+# --- Python ---
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+.eggs/
+dist/
+build/
+
+# --- Virtual environments ---
+.venv/
+venv/
+env/
+
+# --- Environment variables / secrets ---
+.env
+.env.*
+!.env.example
+
+# --- IDE / OS ---
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# --- Jupyter ---
+.ipynb_checkpoints/
+
+# --- Vector stores / local data (do not commit embeddings or indexes) ---
+qdrant_storage/
+*.faiss
+*.index
+vectorstore_data/
+
+# --- Logs ---
+*.log
+logs/
+
+# --- Testing / coverage ---
+.pytest_cache/
+.coverage
+htmlcov/
+
+# --- Uploaded/ingested documents (keep sample docs only, not bulk data) ---
+data/raw/
+data/processed/
