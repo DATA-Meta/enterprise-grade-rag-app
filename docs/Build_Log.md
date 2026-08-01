@@ -87,3 +87,20 @@ search database built for comparing meaning instead of exact text. I tested
 it by asking it to find the chunk most similar to itself — it correctly
 returned a perfect match, proving the whole pipeline (load → chunk → embed →
 store → search) works end-to-end."
+## Step 6: Retrieval (`src/retrieval/retriever.py`)
+
+**What it is:** A single function, `retrieve(question)`, that takes a plain
+English question, embeds it, searches Qdrant, and returns the most relevant
+stored chunks — plus a helper that formats those chunks into one text block
+ready to hand to an LLM.
+
+**Why it matters:** This is the piece that connects "a user typed a question"
+to "here's the relevant information from the knowledge base." Everything
+before this (ingestion, embeddings, vector store) exists to make this one
+function possible. The next step (generation) will call this directly.
+
+**Plain-English summary:** "I built the actual search function: type a
+question, and it finds the most relevant paragraphs from the documents,
+ranked by how closely they match. I tested it by asking about the three
+stages of a RAG pipeline, and it correctly pulled the exact paragraph from
+my sample document that explains that."
