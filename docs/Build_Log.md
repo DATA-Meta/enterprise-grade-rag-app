@@ -104,3 +104,21 @@ question, and it finds the most relevant paragraphs from the documents,
 ranked by how closely they match. I tested it by asking about the three
 stages of a RAG pipeline, and it correctly pulled the exact paragraph from
 my sample document that explains that."
+## Step 7: Guardrails — rule-based layer (`src/guardrails/rules.py`)
+
+**What it is:** Fast, pattern-based checks that run on every question before
+it reaches retrieval or any LLM call — rejecting empty input, excessively
+long input, and known prompt-injection phrasing (e.g. "ignore previous
+instructions").
+
+**Why it matters:** Not every safety check needs an AI model. Catching
+obvious bad input with simple rules is instant and free, and stops junk
+requests before they ever cost an API call or reach the more expensive,
+LLM-based guardrail layer (added in the next step). This is standard
+practice: cheap checks first, expensive checks second.
+
+**Plain-English summary:** "Before any question reaches the AI, it passes
+through a quick bouncer that checks for obviously bad input — empty
+messages, absurdly long text, or attempts to trick the system into ignoring
+its own rules. It's like a metal detector at the door: fast, simple, and it
+catches the obvious problems before anyone gets further inside."
