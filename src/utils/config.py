@@ -15,6 +15,7 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 class Settings(BaseSettings):
     # --- LLM Provider ---
     openai_api_key: str | None = None
+    jina_api_key: str | None = None
 
     # --- Vector DB (Qdrant) ---
     qdrant_url: str = "http://localhost:6333"

@@ -52,3 +52,21 @@ reappears at the start of the next, so no context is lost.
 cuts it into small, slightly-overlapping pieces — like tearing a long letter
 into index cards, but making sure each card includes a bit of the previous
 card's last sentence so nothing gets lost."
+## Step 4: Embeddings (`src/embeddings/embedder.py`)
+
+**What it is:** Converts text chunks into embedding vectors — lists of 1024
+numbers that capture the meaning of the text. Uses Jina AI's API as the
+primary provider, with a local model (mxbai-embed-large-v1) as an automatic
+fallback when no Jina API key is configured.
+
+**Why it matters:** Vector search (used in the next step) can't compare raw
+text directly — it compares these numeric vectors instead, because similar
+meanings produce similar vectors even when the wording is completely
+different. The local fallback means development can continue without
+needing to sign up for a paid API first.
+
+**Plain-English summary:** "I built the part that turns each chunk of text
+into a list of 1024 numbers — a kind of fingerprint of its meaning. Two
+chunks about similar topics end up with similar fingerprints, even if they
+don't share a single word in common. That's what makes 'search by meaning'
+possible instead of just keyword matching."
