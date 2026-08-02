@@ -65,6 +65,7 @@ ruff                           # Fast Python linter and formatter
 ragas                       # RAG-specific evaluation metrics (Faithfulness, Relevancy, Recall)
 deepeval                    # Pytest-compatible test runner wrapping RAGAS & safety metrics
 langfuse                    # Live production monitoring, tracing & user feedback collection
+pytest                         # Testing framework
 
 # --- EMBEDDINGS (SENTENCE TRANSFORMERS) ---
 sentence-transformers       # Local fallback embeddings (mxbai-embed-large-v1)

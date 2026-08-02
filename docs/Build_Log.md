@@ -208,3 +208,22 @@ system — type a question, get an answer with its sources shown underneath.
 When I asked something it genuinely didn't know (based on the documents
 I'd given it), it said so honestly instead of making something up, which
 is the whole point of grounding answers in real retrieved text."
+## Step 13: Unit tests (`tests/test_guardrails.py`, `tests/test_loader.py`)
+
+**What it is:** Automated tests for the guardrails rules and the chunking
+logic — the two modules that are pure logic with no external API calls, so
+tests run instantly and cost nothing.
+
+**Why it matters:** Tests are a safety net. Without them, changing code
+means manually re-checking everything still works, which is slow and easy
+to get wrong. With tests, any future change that breaks existing behavior
+is caught immediately by running `pytest`, before it ever reaches
+production. Testing pure-logic modules first (rather than modules requiring
+Qdrant/Groq/Jina calls) is deliberate: fast, free, deterministic tests
+first; slower, costlier integration tests later.
+
+**Plain-English summary:** "I wrote automated checks that verify the
+guardrails correctly block bad input and the chunking logic correctly
+splits text with proper overlap — 12 tests, all passing. Now if I ever
+change this code later, I can run one command and immediately know if
+I broke something, instead of finding out by accident."
