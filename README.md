@@ -199,19 +199,25 @@ curl -X POST "http://127.0.0.1:8000/query" \
 
 ## 🗺️ Roadmap
 
+-## 🗺️ Roadmap
+
 - [x] Repo scaffold + professional structure
-- [ ] Config loader (`src/utils/config.py`)
-- [ ] Document ingestion + chunking
-- [ ] Embedding generation
-- [ ] Qdrant vector store
-- [ ] Retrieval pipeline
-- [ ] Guardrails integration
-- [ ] LLM generation via Portkey
-- [ ] FastAPI endpoints wired end-to-end
+- [x] Config loader (`src/utils/config.py`)
+- [x] Document ingestion + chunking
+- [x] Embedding generation (Jina API + local fallback)
+- [x] Qdrant vector store
+- [x] Retrieval pipeline
+- [x] Guardrails (rule-based layer)
+- [x] LLM generation via Portkey (Groq)
+- [x] FastAPI endpoints wired end-to-end
 - [ ] Unit tests (pytest)
 - [ ] GitHub Actions CI
+- [ ] LLM-based guardrails layer (NeMo Guardrails, topical/jailbreak detection)
 - [ ] Observability (LangSmith / Langfuse / Prometheus)
 - [ ] Evaluation suite (RAGAS / DeepEval)
+- [ ] Reranking (Jina Reranker)
+- [ ] Multi-format ingestion (.docx, .pptx, .html)
+- [ ] Streamlit frontend UI
 
 ## 🤝 Contributing
 
