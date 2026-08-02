@@ -15,6 +15,7 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 class Settings(BaseSettings):
     # --- LLM Provider ---
     openai_api_key: str | None = None
+    groq_virtual_key: str | None = None
     jina_api_key: str | None = None
 
     # --- Vector DB (Qdrant) ---
@@ -23,6 +24,7 @@ class Settings(BaseSettings):
 
     # --- LLM Gateway (Portkey) ---
     portkey_api_key: str | None = None
+    openai_virtual_key: str | None = None
 
     # --- Guardrails (NVIDIA NeMo / AI Endpoints) ---
     nvidia_api_key: str | None = None

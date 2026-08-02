@@ -122,3 +122,21 @@ through a quick bouncer that checks for obviously bad input — empty
 messages, absurdly long text, or attempts to trick the system into ignoring
 its own rules. It's like a metal detector at the door: fast, simple, and it
 catches the obvious problems before anyone gets further inside."
+## Step 8: LLM Gateway (`src/gateway/llm.py`)
+
+**What it is:** Routes chat completion requests through Portkey to Groq's
+Llama 3.3 70B model, using a Portkey virtual key so the real Groq API key
+never appears in the codebase.
+
+**Why it matters:** A gateway sits between your app and the actual LLM
+provider, giving you centralized observability, the ability to swap
+providers (OpenAI, Groq, Anthropic) via a config change instead of a code
+change, and automatic fallback if one provider goes down or hits a quota
+limit — all without touching application code.
+
+**Plain-English summary:** "I connected the app to an actual AI model, but
+through a routing layer instead of directly. That means if I ever want to
+switch from Groq to OpenAI, or add a backup provider in case one goes down,
+it's a settings change, not a rewrite. I tested it by giving it context
+about RAG pipeline stages and asking a question — it answered correctly
+using only that context, not its own general knowledge."
