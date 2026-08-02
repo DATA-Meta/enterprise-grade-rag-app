@@ -44,3 +44,5 @@ htmlcov/
 # --- Uploaded/ingested documents (keep sample docs only, not bulk data) ---
 data/raw/
 data/processed/
+.agents/skills/
+.claude/skills/

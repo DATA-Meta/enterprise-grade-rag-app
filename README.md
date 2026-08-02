@@ -214,6 +214,7 @@ curl -X POST "http://127.0.0.1:8000/query" \
 - [x] FastAPI endpoints wired end-to-end
 - [x] Reranking (Jina Reranker)
 - - [x] Multi-format ingestion (.docx, .pptx, .html)
+- - [x] Streamlit frontend UI
 
 ### 🔜 In Progress
 - [ ] Unit tests (pytest)
@@ -223,7 +224,7 @@ curl -X POST "http://127.0.0.1:8000/query" \
 - [ ] LLM-based guardrails layer (NeMo Guardrails, topical/jailbreak detection)
 - [ ] Observability (LangSmith / Langfuse / Prometheus)
 - [ ] Evaluation suite (RAGAS / DeepEval)
-- [ ] Streamlit frontend UI
+
 
 ## 🤝 Contributing
 

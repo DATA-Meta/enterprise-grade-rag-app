@@ -189,3 +189,22 @@ base, not just a toy dataset.
 
 **Plain-English summary:** "I expanded the ingestion step to understand
 five different file types instead of two,
+
+## Step 12: Streamlit frontend (`ui/streamlit_app.py`)
+
+**What it is:** A chat interface built with Streamlit that calls the
+FastAPI `/query` endpoint, displays conversation history, and shows source
+citations under each answer.
+
+**Why it matters:** This turns the project from something only testable via
+curl/Postman into something anyone can actually use and see working — a
+real demo, not just an API. It's also the first place where hallucination
+control becomes visible: when asked something outside the ingested
+documents, the assistant correctly said it didn't have enough information,
+rather than inventing an answer.
+
+**Plain-English summary:** "I built an actual chat window for the RAG
+system — type a question, get an answer with its sources shown underneath.
+When I asked something it genuinely didn't know (based on the documents
+I'd given it), it said so honestly instead of making something up, which
+is the whole point of grounding answers in real retrieved text."
