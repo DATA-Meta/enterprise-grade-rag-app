@@ -285,6 +285,13 @@ documents were found, how they were ranked, and what the AI was actually
 told before it answered. This is essential for debugging why an answer
 might be wrong, and for demonstrating the system's behavior transparently."
 ## Step 17: Evaluation suite with DeepEval (`tests/run_evals.py`, `tests/eval_dataset.py`)
+**Update:** Expanded from 2 to all 5 metrics shown in the course's eval
+suite (Faithfulness, Answer Relevancy, Contextual Precision, Contextual
+Recall, Answer Correctness via GEval), matching the reference architecture.
+Also added retry-with-backoff (via `tenacity`) and switched metrics to
+`async_mode=False` after hitting Groq's free-tier rate limit when running
+10 concurrent judge calls — a real, expected constraint of a free API tier,
+not a bug.
 
 **What it is:** An automated evaluation suite scoring the pipeline's real
 answers against a small dataset of known-correct questions, using

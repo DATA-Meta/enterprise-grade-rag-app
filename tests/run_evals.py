@@ -1,16 +1,29 @@
 """
-Evaluation suite using DeepEval, scoring the real pipeline's answers on:
-- Faithfulness: does the answer only use information from the retrieved context?
+Evaluation suite using DeepEval, scoring the real pipeline's answers on 5 metrics:
+- Faithfulness: does the answer only use information from retrieved context?
 - Answer Relevancy: does the answer actually address the question asked?
+- Contextual Precision: are the most relevant chunks ranked highest?
+- Contextual Recall: does the retrieved context contain everything needed
+  to produce the expected answer?
+- Answer Correctness: does the answer match the expected ground truth,
+  factually? (via GEval, DeepEval's custom-criteria judge)
 
 Run with: python -m tests.run_evals
 """
 
 from langchain_openai import ChatOpenAI
+from tenacity import retry, wait_exponential, stop_after_attempt, retry_if_exception_type
+from openai import RateLimitError
 
 from deepeval import evaluate
-from deepeval.metrics import FaithfulnessMetric, AnswerRelevancyMetric
-from deepeval.test_case import LLMTestCase
+from deepeval.metrics import (
+    FaithfulnessMetric,
+    AnswerRelevancyMetric,
+    ContextualPrecisionMetric,
+    ContextualRecallMetric,
+    GEval,
+)
+from deepeval.test_case import LLMTestCase, LLMTestCaseParams
 from deepeval.models.base_model import DeepEvalBaseLLM
 
 from src.utils.config import settings
@@ -24,6 +37,10 @@ class GroqViaPortkeyModel(DeepEvalBaseLLM):
     """
     Wraps our existing Groq-via-Portkey setup so DeepEval can use it as the
     judge model, instead of defaulting to OpenAI.
+
+    Includes automatic retry with exponential backoff, since Groq's free
+    tier has a fairly low tokens-per-minute limit that's easy to hit when
+    running several metrics back-to-back.
     """
 
     def __init__(self):
@@ -40,9 +57,19 @@ class GroqViaPortkeyModel(DeepEvalBaseLLM):
     def load_model(self):
         return self.model
 
+    @retry(
+        retry=retry_if_exception_type(RateLimitError),
+        wait=wait_exponential(multiplier=1, min=2, max=30),
+        stop=stop_after_attempt(5),
+    )
     def generate(self, prompt: str) -> str:
         return self.model.invoke(prompt).content
 
+    @retry(
+        retry=retry_if_exception_type(RateLimitError),
+        wait=wait_exponential(multiplier=1, min=2, max=30),
+        stop=stop_after_attempt(5),
+    )
     async def a_generate(self, prompt: str) -> str:
         response = await self.model.ainvoke(prompt)
         return response.content
@@ -67,8 +94,27 @@ def run_pipeline_for_eval(question: str):
 def main():
     judge_model = GroqViaPortkeyModel()
 
-    faithfulness_metric = FaithfulnessMetric(model=judge_model, threshold=0.5)
-    relevancy_metric = AnswerRelevancyMetric(model=judge_model, threshold=0.5)
+    metrics = [
+        FaithfulnessMetric(model=judge_model, threshold=0.5, async_mode=False),
+        AnswerRelevancyMetric(model=judge_model, threshold=0.5, async_mode=False),
+        ContextualPrecisionMetric(model=judge_model, threshold=0.5, async_mode=False),
+        ContextualRecallMetric(model=judge_model, threshold=0.5, async_mode=False),
+        GEval(
+            name="Answer Correctness",
+            criteria=(
+                "Determine whether the actual output is factually correct "
+                "and consistent with the expected output, even if worded "
+                "differently."
+            ),
+            evaluation_params=[
+                LLMTestCaseParams.ACTUAL_OUTPUT,
+                LLMTestCaseParams.EXPECTED_OUTPUT,
+            ],
+            model=judge_model,
+            threshold=0.5,
+            async_mode=False,
+        ),
+    ]
 
     test_cases = []
     for item in EVAL_QUESTIONS:
@@ -84,8 +130,8 @@ def main():
         print(f"\nQuestion: {item['question']}")
         print(f"Answer: {answer}")
 
-    print("\n--- Running evaluation ---")
-    evaluate(test_cases, [faithfulness_metric, relevancy_metric])
+    print("\n--- Running evaluation (5 metrics) ---")
+    evaluate(test_cases, metrics)
 
 
 if __name__ == "__main__":
