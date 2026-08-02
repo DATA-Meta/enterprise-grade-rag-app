@@ -140,3 +140,20 @@ switch from Groq to OpenAI, or add a backup provider in case one goes down,
 it's a settings change, not a rewrite. I tested it by giving it context
 about RAG pipeline stages and asking a question — it answered correctly
 using only that context, not its own general knowledge."
+## Step 9: Full pipeline wired to the API (`src/generation/generator.py`, `src/app.py`)
+
+**What it is:** `answer_question()` orchestrates the entire pipeline in
+order — guardrails check, then retrieval, then generation — and returns a
+structured result. The FastAPI `/query` endpoint exposes this over HTTP.
+
+**Why it matters:** This is the point where every previous piece (ingestion,
+embeddings, vector store, retrieval, guardrails, LLM gateway) stops being an
+isolated, individually-tested module and becomes one working system that
+answers real questions through a real API call.
+
+**Plain-English summary:** "This is the moment the project became a real,
+working application instead of separate pieces. I can send a question to
+my API over HTTP, and it checks the question is safe, searches my documents
+for relevant information, and generates an answer using only that
+information — citing exactly which document it came from. Tested end-to-end
+with curl: sent a question, got back a correct, sourced answer as JSON."
