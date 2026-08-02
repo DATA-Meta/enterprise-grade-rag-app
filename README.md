@@ -214,10 +214,10 @@ curl -X POST "http://127.0.0.1:8000/query" \
 - [x] FastAPI endpoints wired end-to-end
 - [x] Reranking (Jina Reranker)
 - - [x] Multi-format ingestion (.docx, .pptx, .html)
-- - [x] Streamlit frontend UI
+- [x] Streamlit frontend UI
+- [x] Unit tests (pytest)
 
 ### 🔜 In Progress
-- [ ] Unit tests (pytest)
 - [ ] GitHub Actions CI
 
 ### 🚀 Planned Enhancements
