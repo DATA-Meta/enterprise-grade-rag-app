@@ -32,6 +32,9 @@ A modular, production-style Agentic RAG (Retrieval-Augmented Generation) system 
     - [Query endpoint](#query-endpoint)
   - [🧠 Features](#-features)
   - [🗺️ Roadmap](#️-roadmap)
+    - [✅ Completed](#-completed)
+    - [🔜 In Progress](#-in-progress)
+    - [🚀 Planned Enhancements](#-planned-enhancements)
   - [🤝 Contributing](#-contributing)
   - [📄 License](#-license)
 
@@ -199,8 +202,7 @@ curl -X POST "http://127.0.0.1:8000/query" \
 
 ## 🗺️ Roadmap
 
--## 🗺️ Roadmap
-
+### ✅ Completed
 - [x] Repo scaffold + professional structure
 - [x] Config loader (`src/utils/config.py`)
 - [x] Document ingestion + chunking
@@ -210,8 +212,12 @@ curl -X POST "http://127.0.0.1:8000/query" \
 - [x] Guardrails (rule-based layer)
 - [x] LLM generation via Portkey (Groq)
 - [x] FastAPI endpoints wired end-to-end
+
+### 🔜 In Progress
 - [ ] Unit tests (pytest)
 - [ ] GitHub Actions CI
+
+### 🚀 Planned Enhancements
 - [ ] LLM-based guardrails layer (NeMo Guardrails, topical/jailbreak detection)
 - [ ] Observability (LangSmith / Langfuse / Prometheus)
 - [ ] Evaluation suite (RAGAS / DeepEval)
