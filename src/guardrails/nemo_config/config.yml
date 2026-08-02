@@ -1,0 +1,13 @@
+models:
+  - type: main
+    engine: openai
+    model: llama-3.3-70b-versatile
+    parameters:
+      base_url: https://api.portkey.ai/v1
+      # api_key and headers are injected at runtime in llm_guard.py,
+      # not hardcoded here, so secrets never live in this file.
+
+rails:
+  input:
+    flows:
+      - self check input

@@ -243,3 +243,25 @@ runs my full test suite in the background and tells me with a green
 checkmark or red X whether everything still works — no manual step, no
 forgetting to test before pushing. First run: all 12 tests passed in
 23 seconds."
+## Step 15: LLM-based guardrails (`src/guardrails/llm_guard.py`)
+
+**What it is:** A second, smarter safety layer using NeMo Guardrails'
+"self check input" rail — an LLM (Groq's Llama, via Portkey) judges whether
+a question is safe/on-topic, rather than relying on fixed patterns like the
+rule-based layer does.
+
+**Why it matters:** Pattern-matching (the rule-based layer from Step 7)
+only catches things it was explicitly told to look for. An LLM-based check
+can recognize novel phrasings of a jailbreak attempt or off-topic request
+it's never seen before, at the cost of being slower and using an API call.
+This is why both layers exist together: cheap rules first, smarter (but
+costlier) LLM judgment second.
+
+**Plain-English summary:** "I added a smarter safety check that uses the
+AI itself to judge whether a question is appropriate, instead of just
+matching fixed patterns. Getting this working required digging into the
+internal structure of a third-party library through trial and error, since
+its documentation didn't match the exact object layout in the installed
+version, a normal part of working with fast-moving AI libraries. Tested
+with a real question (allowed) and an injection attempt (correctly
+blocked)."
