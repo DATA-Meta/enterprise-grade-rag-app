@@ -212,6 +212,7 @@ curl -X POST "http://127.0.0.1:8000/query" \
 - [x] Guardrails (rule-based layer)
 - [x] LLM generation via Portkey (Groq)
 - [x] FastAPI endpoints wired end-to-end
+- [x] Reranking (Jina Reranker)
 
 ### 🔜 In Progress
 - [ ] Unit tests (pytest)
@@ -221,7 +222,6 @@ curl -X POST "http://127.0.0.1:8000/query" \
 - [ ] LLM-based guardrails layer (NeMo Guardrails, topical/jailbreak detection)
 - [ ] Observability (LangSmith / Langfuse / Prometheus)
 - [ ] Evaluation suite (RAGAS / DeepEval)
-- [ ] Reranking (Jina Reranker)
 - [ ] Multi-format ingestion (.docx, .pptx, .html)
 - [ ] Streamlit frontend UI
 
