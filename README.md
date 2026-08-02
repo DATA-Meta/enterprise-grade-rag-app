@@ -216,7 +216,7 @@ curl -X POST "http://127.0.0.1:8000/query" \
 - [x] Unit tests (pytest)
 - [x] GitHub Actions CI
 - [x] LLM-based guardrails layer (NeMo Guardrails, topical/jailbreak detection)
-- [ ] Observability (LangSmith / Langfuse / Prometheus)
+- [x] Observability (LangSmith / Langfuse / Prometheus)
 - [ ] Evaluation suite (RAGAS / DeepEval)
 
 ## 🤝 Contributing
