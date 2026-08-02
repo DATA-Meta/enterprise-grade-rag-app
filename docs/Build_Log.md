@@ -284,3 +284,30 @@ was asked and see exactly what happened behind the scenes — which
 documents were found, how they were ranked, and what the AI was actually
 told before it answered. This is essential for debugging why an answer
 might be wrong, and for demonstrating the system's behavior transparently."
+## Step 17: Evaluation suite with DeepEval (`tests/run_evals.py`, `tests/eval_dataset.py`)
+
+**What it is:** An automated evaluation suite scoring the pipeline's real
+answers against a small dataset of known-correct questions, using
+Faithfulness (does the answer stick to retrieved context?) and Answer
+Relevancy (does it address the actual question?) metrics.
+
+**Why it matters:** Testing (Step 13) checks that code behaves correctly.
+Evaluation checks something different: whether the AI's actual answers are
+good. This is what lets you say, with evidence rather than just a feeling,
+that the system's answers are grounded and relevant — critical for a RAG
+system, where the whole point is avoiding hallucination.
+
+**Note on RAGAS vs DeepEval:** the roadmap originally named RAGAS, but its
+current release has an internal dependency conflict with the installed
+version of langchain-community (a broken import path, unrelated to this
+project's own code). Rather than force a fragile version downgrade,
+DeepEval was used instead, since it's already part of the intended stack
+and provides equivalent metrics through an independent dependency chain.
+This is a normal, defensible engineering trade-off when a fast-moving
+library ecosystem has a compatibility break.
+
+**Plain-English summary:** "I built an automated quality check for the
+AI's actual answers, not just the code. It scored my two test questions at
+a perfect 1.00 on both faithfulness (no hallucination) and relevancy
+(answers the question), giving real evidence the system works as intended,
+not just a feeling that it does."

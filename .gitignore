@@ -46,3 +46,4 @@ data/raw/
 data/processed/
 .agents/skills/
 .claude/skills/
+.deepeval/
