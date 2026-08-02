@@ -1,14 +1,16 @@
 """
 Document ingestion: load raw files from a folder and split them into chunks.
 
-Supported for now: .txt, .pdf
-(We'll add .docx, .pptx, .html in a follow-up step once this is working.)
+Supported formats: .txt, .pdf, .docx, .pptx, .html
 """
 
 from dataclasses import dataclass
 from pathlib import Path
 
 from pypdf import PdfReader
+from docx import Document as DocxDocument
+from pptx import Presentation
+from bs4 import BeautifulSoup
 
 
 @dataclass
@@ -36,6 +38,44 @@ def load_pdf(path: Path) -> str:
     return "\n".join(pages)
 
 
+def load_docx(path: Path) -> str:
+    doc = DocxDocument(str(path))
+    paragraphs = [p.text for p in doc.paragraphs if p.text.strip()]
+    return "\n".join(paragraphs)
+
+
+def load_pptx(path: Path) -> str:
+    presentation = Presentation(str(path))
+    text_runs = []
+    for slide in presentation.slides:
+        for shape in slide.shapes:
+            if shape.has_text_frame:
+                for paragraph in shape.text_frame.paragraphs:
+                    text = "".join(run.text for run in paragraph.runs)
+                    if text.strip():
+                        text_runs.append(text)
+    return "\n".join(text_runs)
+
+
+def load_html(path: Path) -> str:
+    raw_html = path.read_text(encoding="utf-8", errors="ignore")
+    soup = BeautifulSoup(raw_html, "html.parser")
+    # Remove script/style tags so we don't ingest code as if it were content
+    for tag in soup(["script", "style"]):
+        tag.decompose()
+    return soup.get_text(separator="\n")
+
+
+LOADERS = {
+    ".txt": load_txt,
+    ".pdf": load_pdf,
+    ".docx": load_docx,
+    ".pptx": load_pptx,
+    ".html": load_html,
+    ".htm": load_html,
+}
+
+
 def load_documents(data_dir: str) -> list[Document]:
     """
     Read every supported file in `data_dir` and return a list of Document objects.
@@ -51,13 +91,16 @@ def load_documents(data_dir: str) -> list[Document]:
             continue
 
         suffix = file_path.suffix.lower()
+        loader_fn = LOADERS.get(suffix)
 
-        if suffix == ".txt":
-            text = load_txt(file_path)
-        elif suffix == ".pdf":
-            text = load_pdf(file_path)
-        else:
-            # Unsupported file type for now — skip it rather than crash.
+        if loader_fn is None:
+            # Unsupported file type — skip it rather than crash.
+            continue
+
+        try:
+            text = loader_fn(file_path)
+        except Exception as e:
+            print(f"Warning: failed to load {file_path.name}: {e}")
             continue
 
         if text.strip():
@@ -69,10 +112,6 @@ def load_documents(data_dir: str) -> list[Document]:
 def chunk_text(text: str, chunk_size: int = 1000, overlap: int = 150) -> list[str]:
     """
     Split text into overlapping chunks of roughly `chunk_size` characters.
-
-    Overlap means the last `overlap` characters of one chunk are repeated at
-    the start of the next chunk, so we don't lose context at chunk boundaries
-    (e.g. a sentence that would otherwise be cut in half).
     """
     if chunk_size <= overlap:
         raise ValueError("chunk_size must be greater than overlap")
@@ -84,7 +123,7 @@ def chunk_text(text: str, chunk_size: int = 1000, overlap: int = 150) -> list[st
     while start < text_length:
         end = start + chunk_size
         chunks.append(text[start:end])
-        start = end - overlap  # step forward, but re-include the overlap
+        start = end - overlap
 
     return chunks
 
@@ -104,9 +143,10 @@ def chunk_documents(documents: list[Document], chunk_size: int = 1000, overlap: 
 
 
 if __name__ == "__main__":
-    # Quick manual test: point this at your DATA folder and print a summary.
     docs = load_documents("DATA")
     print(f"Loaded {len(docs)} document(s).")
+    for doc in docs:
+        print(f"  - {doc.source} ({len(doc.text)} characters)")
 
     chunks = chunk_documents(docs)
     print(f"Produced {len(chunks)} chunk(s).")

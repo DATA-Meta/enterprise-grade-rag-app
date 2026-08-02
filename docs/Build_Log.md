@@ -174,3 +174,18 @@ initial search — like getting a shortlist of candidates fast, then having
 an expert carefully rank just that shortlist. Testing it showed the
 reranker gave a much clearer, more confident distinction between the
 relevant and less relevant chunk than the original search score did."
+## Step 11: Multi-format ingestion (`src/ingestion/loader.py`)
+
+**What it is:** Extended the ingestion module to support `.docx`, `.pptx`,
+and `.html` files, in addition to the original `.txt` and `.pdf`. Uses a
+dictionary mapping file extensions to their specific parsing function, and
+skips unsupported or corrupted files gracefully instead of crashing the
+whole batch.
+
+**Why it matters:** Real-world knowledge bases are rarely just plain text —
+they're a mix of Word docs, slide decks, PDFs, and web pages. Supporting
+multiple formats means the system can ingest a realistic company knowledge
+base, not just a toy dataset.
+
+**Plain-English summary:** "I expanded the ingestion step to understand
+five different file types instead of two,
