@@ -33,7 +33,6 @@ A modular, production-style Agentic RAG (Retrieval-Augmented Generation) system 
   - [🧠 Features](#-features)
   - [🗺️ Roadmap](#️-roadmap)
     - [✅ Completed](#-completed)
-    - [🔜 In Progress](#-in-progress)
     - [🚀 Planned Enhancements](#-planned-enhancements)
   - [🤝 Contributing](#-contributing)
   - [📄 License](#-license)
@@ -216,9 +215,7 @@ curl -X POST "http://127.0.0.1:8000/query" \
 - - [x] Multi-format ingestion (.docx, .pptx, .html)
 - [x] Streamlit frontend UI
 - [x] Unit tests (pytest)
-
-### 🔜 In Progress
-- [ ] GitHub Actions CI
+- [x] GitHub Actions CI
 
 ### 🚀 Planned Enhancements
 - [ ] LLM-based guardrails layer (NeMo Guardrails, topical/jailbreak detection)

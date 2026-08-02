@@ -227,3 +227,19 @@ guardrails correctly block bad input and the chunking logic correctly
 splits text with proper overlap — 12 tests, all passing. Now if I ever
 change this code later, I can run one command and immediately know if
 I broke something, instead of finding out by accident."
+## Step 14: GitHub Actions CI (`.github/workflows/ci.yml`)
+
+**What it is:** A workflow that automatically runs `pytest tests/ -v` on
+every push to `main`, using GitHub's own servers — no manual step required.
+
+**Why it matters:** This is what "continuous integration" actually means:
+tests aren't something you remember to run manually before pushing, they
+run automatically, every time, on a clean environment. If a future change
+breaks something, it shows up as a red X on GitHub within seconds, before
+it can silently ship.
+
+**Plain-English summary:** "Every time I push code now, GitHub automatically
+runs my full test suite in the background and tells me with a green
+checkmark or red X whether everything still works — no manual step, no
+forgetting to test before pushing. First run: all 12 tests passed in
+23 seconds."
