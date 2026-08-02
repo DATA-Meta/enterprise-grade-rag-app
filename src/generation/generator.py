@@ -1,5 +1,6 @@
 """
-The full RAG pipeline: guardrails -> retrieval -> reranking -> generation.
+The full RAG pipeline:
+rule-based guardrails -> LLM-based guardrails -> retrieval -> reranking -> generation.
 
 This is the single function the API calls. It doesn't know or care about
 the details of any individual stage — it just orchestrates them in order.
@@ -8,6 +9,7 @@ the details of any individual stage — it just orchestrates them in order.
 from dataclasses import dataclass
 
 from src.guardrails.rules import check_input
+from src.guardrails.llm_guard import check_input_llm
 from src.retrieval.retriever import retrieve, format_context
 from src.retrieval.reranker import rerank
 from src.gateway.llm import generate_answer
@@ -24,22 +26,30 @@ class RagResponse:
 
 def answer_question(question: str, retrieve_k: int = 5, final_k: int = 3) -> RagResponse:
     """
-    Run a question through the full pipeline: guardrails check, retrieval
-    (broad), reranking (narrow), then generation. Returns a structured
-    response either way.
-
-    retrieve_k: how many candidates to pull from the vector store initially
-    final_k: how many of those, after reranking, actually go to the LLM
+    Run a question through the full pipeline:
+    1. Fast, free rule-based check (rejects obvious bad input instantly)
+    2. Slower, smarter LLM-based check (catches subtler cases)
+    3. Retrieval (broad candidates from the vector store)
+    4. Reranking (narrow to the most relevant)
+    5. Generation (LLM answers using only the retrieved context)
     """
-    guard_result = check_input(question)
-
-    if not guard_result.allowed:
+    rule_result = check_input(question)
+    if not rule_result.allowed:
         return RagResponse(
             question=question,
             answer="I can't process this question.",
             sources=[],
             blocked=True,
-            block_reason=guard_result.reason,
+            block_reason=rule_result.reason,
+        )
+
+    if not check_input_llm(question):
+        return RagResponse(
+            question=question,
+            answer="I can't process this question.",
+            sources=[],
+            blocked=True,
+            block_reason="Blocked by LLM-based safety check.",
         )
 
     initial_chunks = retrieve(question, top_k=retrieve_k)
@@ -56,7 +66,7 @@ def answer_question(question: str, retrieve_k: int = 5, final_k: int = 3) -> Rag
 
     context = format_context(chunks)
     answer = generate_answer(question, context)
-    sources = list({chunk.source for chunk in chunks})  # unique source filenames
+    sources = list({chunk.source for chunk in chunks})
 
     return RagResponse(
         question=question,
