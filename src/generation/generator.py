@@ -1,5 +1,5 @@
 """
-The full RAG pipeline: guardrails -> retrieval -> generation.
+The full RAG pipeline: guardrails -> retrieval -> reranking -> generation.
 
 This is the single function the API calls. It doesn't know or care about
 the details of any individual stage — it just orchestrates them in order.
@@ -9,6 +9,7 @@ from dataclasses import dataclass
 
 from src.guardrails.rules import check_input
 from src.retrieval.retriever import retrieve, format_context
+from src.retrieval.reranker import rerank
 from src.gateway.llm import generate_answer
 
 
@@ -21,10 +22,14 @@ class RagResponse:
     block_reason: str | None = None
 
 
-def answer_question(question: str, top_k: int = 3) -> RagResponse:
+def answer_question(question: str, retrieve_k: int = 5, final_k: int = 3) -> RagResponse:
     """
-    Run a question through the full pipeline: guardrails check, retrieval,
-    then generation. Returns a structured response either way.
+    Run a question through the full pipeline: guardrails check, retrieval
+    (broad), reranking (narrow), then generation. Returns a structured
+    response either way.
+
+    retrieve_k: how many candidates to pull from the vector store initially
+    final_k: how many of those, after reranking, actually go to the LLM
     """
     guard_result = check_input(question)
 
@@ -37,15 +42,17 @@ def answer_question(question: str, top_k: int = 3) -> RagResponse:
             block_reason=guard_result.reason,
         )
 
-    chunks = retrieve(question, top_k=top_k)
+    initial_chunks = retrieve(question, top_k=retrieve_k)
 
-    if not chunks:
+    if not initial_chunks:
         return RagResponse(
             question=question,
             answer="I don't have enough information to answer that.",
             sources=[],
             blocked=False,
         )
+
+    chunks = rerank(question, initial_chunks, top_k=final_k)
 
     context = format_context(chunks)
     answer = generate_answer(question, context)

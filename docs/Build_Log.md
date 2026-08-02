@@ -157,3 +157,20 @@ my API over HTTP, and it checks the question is safe, searches my documents
 for relevant information, and generates an answer using only that
 information — citing exactly which document it came from. Tested end-to-end
 with curl: sent a question, got back a correct, sourced answer as JSON."
+## Step 10: Reranking (`src/retrieval/reranker.py`)
+
+**What it is:** Takes the chunks already found by vector search and re-scores
+them against the question using Jina's dedicated Reranker model, which is
+more precise than embedding similarity alone.
+
+**Why it matters:** Vector similarity search is fast but approximate — it's
+good at finding "roughly relevant" candidates quickly across large datasets,
+but not always great at fine-grained ranking. Reranking adds a second,
+slower-but-more-accurate pass on just the top candidates, sharpening exactly
+which ones are truly most relevant before they go to the LLM.
+
+**Plain-English summary:** "I added a second, more careful pass after the
+initial search — like getting a shortlist of candidates fast, then having
+an expert carefully rank just that shortlist. Testing it showed the
+reranker gave a much clearer, more confident distinction between the
+relevant and less relevant chunk than the original search score did."
