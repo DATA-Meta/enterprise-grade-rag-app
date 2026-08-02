@@ -265,3 +265,22 @@ its documentation didn't match the exact object layout in the installed
 version, a normal part of working with fast-moving AI libraries. Tested
 with a real question (allowed) and an injection attempt (correctly
 blocked)."
+## Step 16: Observability with Langfuse (`src/generation/generator.py`)
+
+**What it is:** Each stage of the pipeline (rule-based guardrail, LLM-based
+guardrail, retrieval, reranking, generation) is wrapped with Langfuse's
+`@observe` decorator, sending a structured trace of every request to a
+Langfuse dashboard.
+
+**Why it matters:** Without tracing, debugging a bad answer means guessing
+which stage went wrong. With tracing, every request shows exactly what
+happened at each step — which chunks were retrieved, what the reranker
+scored them, what the guardrails decided, and what the LLM was actually
+given as context — all in one place, with timing for each stage.
+
+**Plain-English summary:** "I added visibility into every step of a
+request, not just the final answer. Now I can look at any question that
+was asked and see exactly what happened behind the scenes — which
+documents were found, how they were ranked, and what the AI was actually
+told before it answered. This is essential for debugging why an answer
+might be wrong, and for demonstrating the system's behavior transparently."
