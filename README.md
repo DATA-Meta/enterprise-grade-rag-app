@@ -33,7 +33,6 @@ A modular, production-style Agentic RAG (Retrieval-Augmented Generation) system 
   - [🧠 Features](#-features)
   - [🗺️ Roadmap](#️-roadmap)
     - [✅ Completed](#-completed)
-    - [🚀 Planned Enhancements](#-planned-enhancements)
   - [🤝 Contributing](#-contributing)
   - [📄 License](#-license)
 
@@ -216,12 +215,9 @@ curl -X POST "http://127.0.0.1:8000/query" \
 - [x] Streamlit frontend UI
 - [x] Unit tests (pytest)
 - [x] GitHub Actions CI
-
-### 🚀 Planned Enhancements
-- [ ] LLM-based guardrails layer (NeMo Guardrails, topical/jailbreak detection)
+- [x] LLM-based guardrails layer (NeMo Guardrails, topical/jailbreak detection)
 - [ ] Observability (LangSmith / Langfuse / Prometheus)
 - [ ] Evaluation suite (RAGAS / DeepEval)
-
 
 ## 🤝 Contributing
 
